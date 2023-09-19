@@ -21,6 +21,8 @@ Start:
 	mov	#ViewConfig, @#177530		; create window (so called "view")
 	nop
 
+	clr	@#177560			; keyboard?
+
 	jmp	Speed
 
 PaletteConfig:	.word	17			; command "create palette"
@@ -146,8 +148,9 @@ Render:
 	add	#300, R0			; next screen line
 	bpl	Render				; end of screen?
 
-	emt	#340				; read a char from keyboard
-	bcs	Loop
+	tstb	@#177560			; anykey?
+	bpl	Loop
+	tst	@#177562
 
 	; free window and palette
 	mov	#2, AreaConfig			; command "free area"
