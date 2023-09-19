@@ -146,8 +146,21 @@ Render:
 	add	#300, R0			; next screen line
 	bpl	Render				; end of screen?
 
-	jmp	Loop				; next frame
+	emt	#340				; read a char from keyboard
+	bcs	Loop
 
+	; free window and palette
+	mov	#2, AreaConfig			; command "free area"
+	mov	#AreaConfig, @#177530		; free area and its view
+	nop
+	mov	#21, PaletteConfig		; command "free palette"
+	mov	#PaletteConfig, @#177530	; free palette
+	nop
+	; exit program
+	; movb	#20, @#53			; set Unconditional error to abort com-file
+	; bis	#4000, @#44			; set Job Status Word to abort com-file
+	clr	R0				; close all files
+	emt	#350				; and exit to RT-11 system
 
 ; Sinus
 ; input: R4 - angle
